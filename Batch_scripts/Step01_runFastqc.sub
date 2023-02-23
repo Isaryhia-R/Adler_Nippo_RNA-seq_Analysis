@@ -1,0 +1,35 @@
+#!/bin/bash
+
+#SBATCH --time=4:00:00 #walltime
+#SBATCH --job-name=ATAC_Trim      ## Name of the job.
+#SBATCH --nodes=1            ## (-N) number of nodes to use
+#SBATCH --ntasks=1           ## (-n) number of tasks to launch
+#SBATCH --cpus-per-task=28    ## number of cores the job needs
+#SBATCH --output=atac_trim-%J.out ## output log file
+#SBATCH --error=atac_trim-%J.err ## error log file
+
+module load java/1.8.0_172
+
+source /home/imrodrig/miniconda3/bin/activate atac-env
+
+# extra arguments such as "--adapters" will be added to the end of FASTQC_ARGS
+FASTQC_ARGS="--noextract --threads 1 "
+
+INPATH=/central/groups/stathopouloslab/imrodrig/Adler_Nippo/Nippostronglyus_project  ## directory path
+BASENAME=$1
+
+IN_FQ1=${INPATH}/fastq/${BASENAME}/*_R1_001.fastq.gz                # first read of pair fastQ
+IN_FQ2=${INPATH}/fastq/${BASENAME}/*_R2_001.fastq.gz                # second read of pair fastQ
+
+FASTQC_DONE=$FASTQ_FILE.done
+mkdir /central/groups/stathopouloslab/imrodrig/Adler_Nippo/Nippostronglyus_project/output/${BASENAME}
+OUTDIR=/central/groups/stathopouloslab/imrodrig/Adler_Nippo/Nippostronglyus_project/output/${BASENAME}
+
+mkdir ${OUTDIR}
+cd $OUTDIR
+
+if [ ! -f $FASTQC_DONE ]; then
+  fastqc $FASTQC_ARGS --outdir $OUTDIR $IN_FQ1 && \
+  fastqc $FASTQC_ARGS --outdir $OUTDIR $IN_FQ2 && \
+  touch $FASTQC_DONE
+fi

@@ -1,0 +1,28 @@
+#!/bin/bash
+
+#SBATCH --time=4:00:00 #walltime
+#SBATCH --job-name=RNA-seq_Map      ## Name of the job.
+#SBATCH --nodes=1            ## (-N) number of nodes to use
+#SBATCH --ntasks=1           ## (-n) number of tasks to launch
+#SBATCH --cpus-per-task=28    ## number of cores the job needs
+#SBATCH --output=kallisto_map-%J.out ## output log file
+#SBATCH --error=kallisto_map-%J.err ## error log file
+
+module load java/1.8.0_172
+
+source /home/imrodrig/miniconda3/bin/activate atac-env
+
+INPATH=/central/groups/stathopouloslab/imrodrig/Adler_Nippo/Nippostronglyus_project/  ## directory path
+BASENAME=$1
+
+mkdir /central/groups/stathopouloslab/imrodrig/Adler_Nippo/Nippostronglyus_project/output/2023_02_13/${BASENAME}
+
+OUTDIR=/central/groups/stathopouloslab/imrodrig/Adler_Nippo/Nippostronglyus_project/output/2023_02_13/${BASENAME}
+
+IN_FQ1=${INPATH}fastq/${BASENAME}/*_R1_001.fastq.gz                 # first read of pair fastq
+IN_FQ2=${INPATH}fastq/${BASENAME}/*_R2_001.fastq.gz                 # second read of pair fastq
+
+
+INDEX=/central/groups/stathopouloslab/imrodrig/Adler_Nippo/Nippostronglyus_project/prelim_ref/2023_transcriptome/2022.08.16.01_cds_dna_Nippo_brasil.idx   # path to kallisto index directory
+
+kallisto quant -i $INDEX -o $OUTDIR $IN_FQ1 $IN_FQ2
