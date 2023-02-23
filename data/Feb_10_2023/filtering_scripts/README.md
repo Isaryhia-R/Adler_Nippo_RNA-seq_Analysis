@@ -1,0 +1,1 @@
+This directory contains the various scripts and resources neeeded to collapse transcripts into genes, filter TPM matrices abv 1TPM and collect and assigned genes expressed above 1TPM before and after transcript collapse.
